@@ -34,7 +34,7 @@ jobs:
           cp -r docs/* /tmp/docs-build/docs/language-clients/python/
 
       - name: Install Mintlify CLI
-        run: npm install -g mintlify
+        run: npm i -g mint
 
       - name: Validate docs
         working-directory: /tmp/docs-build
