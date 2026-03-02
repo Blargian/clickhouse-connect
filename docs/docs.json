@@ -1,0 +1,46 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "ClickHouse Python Client",
+  "theme": "almond",
+  "colors": {
+    "primary": "#1c1c1c",
+    "light": "#333431",
+    "dark": "#fdff75"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "languages": [
+      {
+        "language": "en",
+        "tabs": [
+          {
+            "tab": "Documentation",
+            "menu": [
+              {
+                "group": "Python",
+                "icon": "/images/integrations/logos/python.svg",
+                "pages": [
+                  "overview",
+                  "usage",
+                  "examples",
+                  {
+                    "group": "Reference",
+                    "pages": [
+                      "reference/driver-api",
+                      "reference/additional-options",
+                      "reference/advanced-querying",
+                      "reference/advanced-inserting",
+                      "reference/advanced-usage",
+                      "sqlalchemy"
+                    ]
+                  },
+                  "release-notes"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

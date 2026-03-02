@@ -1,0 +1,41 @@
+name: 'Verify Docs'
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    name: Mintlify Verify
+    steps:
+      - name: Checkout clickhouse-connect
+        uses: actions/checkout@v4
+
+      - name: Sparse-checkout shared assets from core docs repo
+        run: |
+          git clone --depth 1 --filter=blob:none --sparse \
+            https://github.com/Blargian/ClickHouse-Mintlify-test.git \
+            /tmp/core-docs
+          cd /tmp/core-docs
+          git sparse-checkout set docs/snippets docs/images docs/favicon.svg
+
+          # Copy shared assets into the docs directory
+          cp -r docs/snippets "$GITHUB_WORKSPACE/docs/snippets"
+          cp -r docs/images "$GITHUB_WORKSPACE/docs/images"
+          cp docs/favicon.svg "$GITHUB_WORKSPACE/docs/favicon.svg"
+
+      - name: Install Mintlify CLI
+        run: npm install -g mintlify
+
+      - name: Verify docs
+        working-directory: docs
+        run: mintlify verify
