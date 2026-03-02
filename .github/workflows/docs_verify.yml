@@ -15,27 +15,27 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    name: Mintlify Verify
+    name: Mintlify Validate
     steps:
       - name: Checkout clickhouse-connect
         uses: actions/checkout@v4
 
-      - name: Sparse-checkout shared assets from core docs repo
+      - name: Sparse-checkout full docs from core repo
         run: |
           git clone --depth 1 --filter=blob:none --sparse \
             https://github.com/Blargian/ClickHouse-Mintlify-test.git \
             /tmp/core-docs
           cd /tmp/core-docs
-          git sparse-checkout set docs/snippets docs/images docs/favicon.svg
+          git sparse-checkout set docs
 
-          # Copy shared assets into the docs directory
-          cp -r docs/snippets "$GITHUB_WORKSPACE/docs/snippets"
-          cp -r docs/images "$GITHUB_WORKSPACE/docs/images"
-          cp docs/favicon.svg "$GITHUB_WORKSPACE/docs/favicon.svg"
+      - name: Overlay clickhouse-connect docs into core docs
+        run: |
+          cp -r /tmp/core-docs/docs /tmp/docs-build
+          cp -r docs/* /tmp/docs-build/docs/language-clients/python/
 
       - name: Install Mintlify CLI
         run: npm install -g mintlify
 
-      - name: Verify docs
-        working-directory: docs
-        run: mintlify verify
+      - name: Validate docs
+        working-directory: /tmp/docs-build
+        run: mint validate
