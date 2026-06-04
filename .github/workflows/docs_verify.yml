@@ -15,27 +15,19 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    name: Mintlify Validate
+    name: Mintlify checks
     steps:
       - name: Checkout clickhouse-connect
         uses: actions/checkout@v4
 
-      - name: Sparse-checkout full docs from core repo
+      # The driver pulls the docs-builder image (which provides `mint`), sparse-
+      # clones the aggregator docs repo plus its shared check scripts, replaces
+      # the Python client folder with this repo's docs/, and runs the checks
+      # (mint validate + mint broken-links) inside the image. It exits non-zero
+      # if any check fails, so a green step means every check passed.
+      - name: Run Mintlify docs checks
         run: |
-          git clone --depth 1 --filter=blob:none --sparse \
-            https://github.com/Blargian/ClickHouse-Mintlify-test.git \
-            /tmp/core-docs
-          cd /tmp/core-docs
-          git sparse-checkout set docs
-
-      - name: Overlay clickhouse-connect docs into core docs
-        run: |
-          cp -r /tmp/core-docs/docs /tmp/docs-build
-          cp -r docs/* /tmp/docs-build/docs/language-clients/python/
-
-      - name: Install Mintlify CLI
-        run: npm i -g mint
-
-      - name: Validate docs
-        working-directory: /tmp/docs-build
-        run: mint validate
+          python3 .github/scripts/mintlify_docs_check.py \
+            --repo https://github.com/ClickHouse/ClickHouse.git \
+            --ref master \
+            --replace docs:integrations/language-clients/python
